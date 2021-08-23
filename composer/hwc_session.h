@@ -677,6 +677,7 @@ class HWCSession : hwc2_device_t, HWCUEventListener, public qClient::BnQClient,
   std::map <hwc2_display_t, sdm::DisplayType> map_active_displays_;
   vector<HWDisplayInfo> virtual_display_list_ = {};
   std::map <hwc2_display_t, std::future<int>> commit_done_future_;
+  bool pluggable_is_primary_ = false;
 };
 }  // namespace sdm
 
