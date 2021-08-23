@@ -32,7 +32,7 @@
 /*
 * Changes from Qualcomm Innovation Center are provided under the following license:
 *
-* Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted (subject to the limitations in the
@@ -973,6 +973,10 @@ DisplayError HWInfoDRM::GetDisplaysStatus(HWDisplaysInfo *hw_displays_info) {
     hw_info.is_wb_ubwc_supported = iter.second.is_wb_ubwc_supported;
     hw_info.is_reserved = iter.second.is_reserved;
     hw_info.max_linewidth = iter.second.max_linewidth;
+    if (iter.second.ext_bridge_hpd) {
+      hw_info.display_type = kPluggable;
+    }
+
     if (hw_info.display_id >= 0) {
       (*hw_displays_info)[hw_info.display_id] = hw_info;
     }
@@ -989,6 +993,7 @@ DisplayError HWInfoDRM::GetDisplaysStatus(HWDisplaysInfo *hw_displays_info) {
 
 DisplayError HWInfoDRM::GetMaxDisplaysSupported(const DisplayType type, int32_t *max_displays) {
   static DebugTag log_once = kTagNone;
+  bool dsi_bridge_pluggable = false;
 
   if (!max_displays) {
     DLOGE("No output parameter provided!");
@@ -1030,12 +1035,31 @@ DisplayError HWInfoDRM::GetMaxDisplaysSupported(const DisplayType type, int32_t 
     }
   }
 
+  sde_drm::DRMConnectorsInfo conns_info = {};
+  drm_err = drm_mgr_intf_->GetConnectorsInfo(&conns_info);
+  if (drm_err) {
+    DLOGE("DRM Driver get connector error %d while getting max displays supported!", drm_err);
+    return kErrorUndefined;
+  }
+
+  for (auto &iter : conns_info) {
+    if (iter.second.ext_bridge_hpd) {
+      max_displays_builtin--;
+      max_displays_tmds++;
+      dsi_bridge_pluggable = true;
+    }
+  }
+
   switch (type) {
     case kBuiltIn:
       *max_displays = max_displays_builtin;
       break;
     case kPluggable:
-      *max_displays = std::max(max_displays_tmds, max_displays_dpmst);
+      if (dsi_bridge_pluggable) {
+        *max_displays = max_displays_tmds + max_displays_dpmst;
+      } else {
+        *max_displays = std::max(max_displays_tmds, max_displays_dpmst);
+      }
       break;
     case kVirtual:
       *max_displays = max_displays_virtual;
@@ -1049,13 +1073,24 @@ DisplayError HWInfoDRM::GetMaxDisplaysSupported(const DisplayType type, int32_t 
       return kErrorParameters;
   }
 
-  DLOGI_IF(log_once, "Max %d concurrent displays.",
-           max_displays_builtin + std::max(max_displays_tmds, max_displays_dpmst) +
-               max_displays_virtual);
+  if (dsi_bridge_pluggable) {
+    DLOGI_IF(log_once, "Max %d concurrent displays.",
+             max_displays_builtin + (max_displays_tmds + max_displays_dpmst) +
+             max_displays_virtual);
+  } else {
+    DLOGI_IF(log_once, "Max %d concurrent displays.",
+             max_displays_builtin + std::max(max_displays_tmds, max_displays_dpmst) +
+             max_displays_virtual);
+  }
   DLOGI_IF(log_once, "Max %d concurrent displays of type %d (BuiltIn).", max_displays_builtin,
            kBuiltIn);
-  DLOGI_IF(log_once, "Max %d concurrent displays of type %d (Pluggable).",
-           std::max(max_displays_tmds, max_displays_dpmst), kPluggable);
+  if (dsi_bridge_pluggable) {
+    DLOGI_IF(log_once, "Max %d concurrent displays of type %d (Pluggable).",
+             (max_displays_tmds + max_displays_dpmst), kPluggable);
+  } else {
+    DLOGI_IF(log_once, "Max %d concurrent displays of type %d (Pluggable).",
+             std::max(max_displays_tmds, max_displays_dpmst), kPluggable);
+  }
   DLOGI_IF(log_once, "Max %d concurrent displays of type %d (Virtual).", max_displays_virtual,
            kVirtual);
 

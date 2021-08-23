@@ -30,7 +30,7 @@
 /*
 * Changes from Qualcomm Innovation Center are provided under the following license:
 *
-* Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted (subject to the limitations in the
@@ -673,6 +673,7 @@ void DRMConnector::ParseCapabilities(uint64_t blob_id, DRMConnectorInfo *info) {
   const string max_os_brightness = "max os brightness=";
   const string max_panel_backlight = "max panel backlight=";
   const string backlight_type = "backlight type=";
+  const string ext_bridge = "ext bridge hpd support=";
 
   while (std::getline(stream, line)) {
     if (line.find(pixel_formats) != string::npos) {
@@ -716,6 +717,8 @@ void DRMConnector::ParseCapabilities(uint64_t blob_id, DRMConnectorInfo *info) {
       if (string(line, backlight_type.length()) == "dcs") {
         info->backlight_type = string(line, backlight_type.length());
       }
+    } else if (line.find(ext_bridge) != string::npos) {
+      info->ext_bridge_hpd = (string(line, ext_bridge.length()) == "true");
     }
 
   }

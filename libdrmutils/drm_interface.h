@@ -30,7 +30,7 @@
 /*
 * Changes from Qualcomm Innovation Center are provided under the following license:
 *
-* Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
 * SPDX-License-Identifier: BSD-3-Clause-Clear
 */
 
@@ -854,6 +854,7 @@ struct DRMConnectorInfo {
   bool is_wb_ubwc_supported;
   uint32_t topology_control;
   bool dyn_bitclk_support;
+  bool ext_bridge_hpd;
   std::vector<uint8_t> edid;
   uint32_t supported_colorspaces;
   uint64_t panel_id = 0;
