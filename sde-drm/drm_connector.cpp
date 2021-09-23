@@ -394,6 +394,14 @@ void DRMConnectorManager::Update() {
   drmModeFreeResources(resource);
 }
 
+void DRMConnectorManager::SetSkipConnectorsReload(bool reload) {
+  for (auto conn = connector_pool_.cbegin(); conn != connector_pool_.cend();) {
+    conn->second->SetSkipConnectorReload(reload);
+    conn++;
+  }
+}
+
+
 void DRMConnectorManager::DumpByID(uint32_t id) {
   lock_guard<mutex> lock(lock_);
   connector_pool_[id]->Dump();

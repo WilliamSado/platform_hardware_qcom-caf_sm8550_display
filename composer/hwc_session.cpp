@@ -1341,7 +1341,7 @@ int32_t HWCSession::GetDozeSupport(hwc2_display_t display, int32_t *out_support)
 
 void HWCSession::GetVirtualDisplayList() {
   HWDisplaysInfo hw_displays_info = {};
-  core_intf_->GetDisplaysStatus(&hw_displays_info);
+  core_intf_->GetDisplaysStatus(true, &hw_displays_info);
 
   for (auto &iter : hw_displays_info) {
     auto &info = iter.second;
@@ -2873,7 +2873,7 @@ int HWCSession::CreatePrimaryDisplay() {
   int status = -EINVAL;
   HWDisplaysInfo hw_displays_info = {};
 
-  DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+  DisplayError error = core_intf_->GetDisplaysStatus(true, &hw_displays_info);
   if (error != kErrorNone) {
     DLOGE("Failed to get connected display list. Error = %d", error);
     return status;
@@ -2948,7 +2948,7 @@ int HWCSession::CreatePrimaryDisplay() {
     }
 
     if (primary_pending_) {
-      DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+      DisplayError error = core_intf_->GetDisplaysStatus(false, &hw_displays_info);
       if (error != kErrorNone) {
         DLOGE("Failed to get connected display list. Error = %d", error);
         return status;
@@ -2965,7 +2965,7 @@ int HWCSession::HandleBuiltInDisplays() {
   }
 
   HWDisplaysInfo hw_displays_info = {};
-  DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+  DisplayError error = core_intf_->GetDisplaysStatus(true, &hw_displays_info);
   if (error != kErrorNone) {
     DLOGE("Failed to get connected display list. Error = %d", error);
     return -EINVAL;
@@ -3029,7 +3029,7 @@ int HWCSession::HandleBuiltInDisplays() {
 bool HWCSession::IsHWDisplayConnected(hwc2_display_t client_id) {
   HWDisplaysInfo hw_displays_info = {};
 
-  DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+  DisplayError error = core_intf_->GetDisplaysStatus(false, &hw_displays_info);
   if (error != kErrorNone) {
     DLOGE("Failed to get connected display list. Error = %d", error);
     return false;
@@ -3084,7 +3084,7 @@ int HWCSession::HandlePluggableDisplays(bool delay_hotplug) {
   }
 
   DLOGI("Handling hotplug...");
-  DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+  DisplayError error = core_intf_->GetDisplaysStatus(false, &hw_displays_info);
   if (error != kErrorNone) {
     DLOGE("Failed to get connected display list. Error = %d", error);
     return -EINVAL;
@@ -3664,7 +3664,7 @@ void HWCSession::HandlePendingPowerMode(hwc2_display_t disp_id,
 
   SCOPE_LOCK(pluggable_handler_lock_);
   HWDisplaysInfo hw_displays_info = {};
-  DisplayError error = core_intf_->GetDisplaysStatus(&hw_displays_info);
+  DisplayError error = core_intf_->GetDisplaysStatus(true, &hw_displays_info);
   if (error != kErrorNone) {
     DLOGE("Failed to get connected display list. Error = %d", error);
     return;

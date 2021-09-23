@@ -30,7 +30,7 @@
 /*
 * Changes from Qualcomm Innovation Center are provided under the following license:
 *
-* Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted (subject to the limitations in the
@@ -140,6 +140,7 @@ class DRMConnectorManager {
   int GetPossibleEncoders(uint32_t connector_id, std::set<uint32_t> *possible_encoders);
   int GetPreferredModeLMCounts(std::map<uint32_t, uint8_t> *lm_counts);
   void MapEncoderToConnector(std::map<uint32_t, uint32_t> *encoder_to_connector);
+  void SetSkipConnectorsReload(bool reload);
   ~DRMConnectorManager() {}
 
  private:

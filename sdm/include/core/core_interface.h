@@ -295,7 +295,7 @@ class CoreInterface {
 
     @return \link DisplayError \endlink
   */
-  virtual DisplayError GetDisplaysStatus(HWDisplaysInfo *hw_displays_info) = 0;
+  virtual DisplayError GetDisplaysStatus(bool skip_reload, HWDisplaysInfo *hw_displays_info) = 0;
 
   /*! @brief Method to get the maximum supported number of concurrent displays of a particular type.
 

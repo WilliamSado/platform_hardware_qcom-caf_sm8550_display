@@ -97,7 +97,7 @@ class CoreImpl : public CoreInterface {
   virtual DisplayError DestroyNullDisplay(DisplayInterface *intf);
   virtual DisplayError SetMaxBandwidthMode(HWBwModes mode);
   virtual DisplayError GetFirstDisplayInterfaceType(HWDisplayInterfaceInfo *hw_disp_info);
-  virtual DisplayError GetDisplaysStatus(HWDisplaysInfo *hw_displays_info);
+  virtual DisplayError GetDisplaysStatus(bool skip_reload, HWDisplaysInfo *hw_displays_info);
   virtual DisplayError GetMaxDisplaysSupported(DisplayType type, int32_t *max_displays);
   virtual bool IsRotatorSupportedFormat(LayerBufferFormat format);
   virtual DisplayError ReserveDemuraResources();

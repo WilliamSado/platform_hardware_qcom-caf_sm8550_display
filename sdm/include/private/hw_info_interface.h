@@ -1,7 +1,7 @@
 /*
 * Copyright (c) 2014-2016, 2018 The Linux Foundation. All rights reserved.
 *
-* Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022, 2024 Qualcomm Innovation Center, Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without modification, are permitted
 * provided that the following conditions are met:
@@ -44,7 +44,7 @@ class HWInfoInterface {
   virtual DisplayError Init() = 0;
   virtual DisplayError GetHWResourceInfo(HWResourceInfo *hw_resource) = 0;
   virtual DisplayError GetFirstDisplayInterfaceType(HWDisplayInterfaceInfo *hw_disp_info) = 0;
-  virtual DisplayError GetDisplaysStatus(HWDisplaysInfo *hw_displays_info) = 0;
+  virtual DisplayError GetDisplaysStatus(bool skip_reload, HWDisplaysInfo *hw_displays_info) = 0;
   virtual DisplayError GetMaxDisplaysSupported(DisplayType type, int32_t *max_displays) = 0;
   virtual DisplayError GetRequiredDemuraFetchResourceCount(
                        std::map<uint32_t, uint8_t> *required_demura_fetch_cnt) = 0;

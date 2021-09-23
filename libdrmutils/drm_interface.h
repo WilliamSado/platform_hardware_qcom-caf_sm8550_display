@@ -1255,7 +1255,7 @@ class DRMManagerInterface {
    * [output]: DRMConnectorsInfo: Resource info for connectors.
    * [return]: 0 on success, a negative error value otherwise.
    */
-  virtual int GetConnectorsInfo(DRMConnectorsInfo *info) = 0;
+  virtual int GetConnectorsInfo(bool skip_reload, DRMConnectorsInfo *info) = 0;
 
   /*
    * Provides information on a selected encoder.

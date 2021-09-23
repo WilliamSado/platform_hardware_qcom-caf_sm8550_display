@@ -27,6 +27,13 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+* Changes from Qualcomm Innovation Center are provided under the following license:
+*
+* Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause-Clear
+*/
+
 #ifndef __DRM_MANAGER_H__
 #define __DRM_MANAGER_H__
 
@@ -55,7 +62,7 @@ class DRMManager : public DRMManagerInterface {
   virtual void GetPlanesInfo(DRMPlanesInfo *info);
   virtual int GetCrtcInfo(uint32_t crtc_id, DRMCrtcInfo *info);
   virtual int GetConnectorInfo(uint32_t conn_id, DRMConnectorInfo *info);
-  virtual int GetConnectorsInfo(DRMConnectorsInfo *infos);
+  virtual int GetConnectorsInfo(bool skip_reload, DRMConnectorsInfo *infos);
   virtual int GetEncoderInfo(uint32_t encoder_id, DRMEncoderInfo *info);
   virtual int GetEncodersInfo(DRMEncodersInfo *infos);
   virtual void GetCrtcPPInfo(uint32_t crtc_id, DRMPPFeatureInfo *info);

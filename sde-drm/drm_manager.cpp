@@ -27,6 +27,13 @@
 * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/*
+* Changes from Qualcomm Innovation Center are provided under the following license:
+*
+* Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+* SPDX-License-Identifier: BSD-3-Clause-Clear
+*/
+
 #include <drm_logger.h>
 
 #include <string.h>
@@ -152,11 +159,12 @@ int DRMManager::GetConnectorInfo(uint32_t conn_id, DRMConnectorInfo *info) {
   return conn_mgr_->GetConnectorInfo(conn_id, info);
 }
 
-int DRMManager::GetConnectorsInfo(DRMConnectorsInfo *infos) {
+int DRMManager::GetConnectorsInfo(bool skip_reload, DRMConnectorsInfo *infos) {
   *infos = {};
   int ret = -ENODEV;
   std::vector<uint32_t> conn_ids;
   conn_mgr_->Update();
+  conn_mgr_->SetSkipConnectorsReload(skip_reload);
   conn_mgr_->GetConnectorList(&conn_ids);
   for (auto iter : conn_ids) {
     DRMConnectorInfo info;

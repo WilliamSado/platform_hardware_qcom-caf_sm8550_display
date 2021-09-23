@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
 
@@ -28,7 +28,7 @@ DisplayError HWInfoDefault::GetFirstDisplayInterfaceType(HWDisplayInterfaceInfo 
   return kErrorNone;
 }
 
-DisplayError HWInfoDefault::GetDisplaysStatus(HWDisplaysInfo *hw_displays_info) {
+DisplayError HWInfoDefault::GetDisplaysStatus(bool skip_reload, HWDisplaysInfo *hw_displays_info) {
   HWDisplayInfo hw_info = {};
 
   hw_info.display_type = kBuiltIn;
