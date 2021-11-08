@@ -25,7 +25,13 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * Changes from Qualcomm Innovation Center are provided under the following license:
+ *
+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
+
 #include <utils/constants.h>
 #include <utils/debug.h>
 #include <utils/locker.h>
@@ -81,7 +87,7 @@ HWC2::Error HWCCallbacks::Vsync(hwc2_display_t display, int64_t timestamp) {
   if (!vsync_) {
     return HWC2::Error::NoResources;
   }
-  vsync_(vsync_data_, display, timestamp);
+  vsync_(vsync_data_, vsync_source_, timestamp);
   return HWC2::Error::None;
 }
 
