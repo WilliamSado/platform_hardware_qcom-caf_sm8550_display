@@ -3318,7 +3318,10 @@ int HWCSession::HandleDisconnectedDisplays(HWDisplaysInfo *hw_displays_info) {
       }
     }
     if (disconnect) {
-      DestroyDisplay(&map_info);
+      // Primary pluggable display got disconnected.
+      SCOPE_LOCK(locker_[HWC_DISPLAY_PRIMARY]);
+      hwc_display_[HWC_DISPLAY_PRIMARY]->SetState(false);
+      return 0;
     }
   }
 
@@ -3381,7 +3384,7 @@ void HWCSession::DestroyPluggableDisplay(DisplayMapInfo *map_info) {
   hwc2_display_t client_id = map_info->client_id;
 
   DLOGI("Notify hotplug display disconnected: client id = %d", UINT32(client_id));
-  if (!pluggable_is_primary_) {
+  if ((pluggable_is_primary_ && client_id != HWC_DISPLAY_PRIMARY)|| !pluggable_is_primary_) {
     callbacks_.Hotplug(client_id, HWC2::Connection::Disconnected);
   }
 
@@ -3397,10 +3400,7 @@ void HWCSession::DestroyPluggableDisplay(DisplayMapInfo *map_info) {
     }
     DLOGI("Destroy display %d-%d, client id = %d", map_info->sdm_id, map_info->disp_type,
          UINT32(client_id));
-    if (pluggable_is_primary_) {
-      hwc_display_[HWC_DISPLAY_PRIMARY]->SetState(false);
-      return;
-    }
+
     {
       SCOPE_LOCK(hdr_locker_[client_id]);
       is_hdr_display_[UINT32(client_id)] = false;
