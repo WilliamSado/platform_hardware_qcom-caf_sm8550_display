@@ -56,6 +56,7 @@ class DisplayNull : public DisplayInterface {
   virtual DisplayError GetMixerResolution(uint32_t *width, uint32_t *height);
 
   virtual DisplayError GetFrameBufferConfig(DisplayConfigVariableInfo *variable_info);
+  virtual DisplayError SetFrameBufferConfig(const DisplayConfigVariableInfo &variable_info);
   virtual DisplayError GetConfig(uint32_t index, DisplayConfigVariableInfo *disp_attr);
   virtual DisplayError GetConfig(DisplayConfigFixedInfo *fixed_info);
   virtual DisplayError GetRealConfig(uint32_t index, DisplayConfigVariableInfo *disp_attr);
@@ -90,7 +91,6 @@ class DisplayNull : public DisplayInterface {
   MAKE_NO_OP(Commit(LayerStack *))
   MAKE_NO_OP(GetDisplayState(DisplayState *))
   MAKE_NO_OP(SetDisplayState(DisplayState, bool, shared_ptr<Fence> *))
-  MAKE_NO_OP(SetFrameBufferConfig(const DisplayConfigVariableInfo &))
   MAKE_NO_OP(Flush(LayerStack *))
   MAKE_NO_OP(GetVSyncState(bool *))
   MAKE_NO_OP(SetDrawMethod(DisplayDrawMethod))

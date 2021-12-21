@@ -74,6 +74,12 @@ DisplayError DisplayNull::GetFrameBufferConfig(DisplayConfigVariableInfo *variab
   return kErrorNone;
 }
 
+DisplayError DisplayNull::SetFrameBufferConfig(const DisplayConfigVariableInfo
+                                               &variable_info) {
+  default_variable_config_ = variable_info;
+  return kErrorNone;
+}
+
 DisplayError DisplayNull::GetConfig(uint32_t index, DisplayConfigVariableInfo *disp_attr) {
   if (!disp_attr) {
     return kErrorParameters;

@@ -336,6 +336,12 @@ int HWCSession::Init() {
     DLOGI("Creating the Primary display...done!");
   }
 
+  // Precondition: CreatePrimaryDisplay called
+  status = SetBestNullDisplayResolution();
+  if (status) {
+    DLOGE("Failed to update NULL display's resolution. Using default resolution.");
+  }
+
   is_composer_up_ = true;
   StartServices();
 
@@ -2925,6 +2931,78 @@ android::status_t HWCSession::GetVisibleDisplayRect(const android::Parcel *input
   output_parcel->writeInt32(visible_rect.bottom);
 
   return android::NO_ERROR;
+}
+
+int HWCSession::SetBestNullDisplayResolution() {
+  int status = 0;
+
+  if (!null_display_active_) {
+    return status;
+  }
+
+  HWDisplaysInfo hw_displays_info = {};
+  status = core_intf_->GetDisplaysStatus(false, &hw_displays_info);
+  if (status != kErrorNone) {
+    DLOGE("Failed to get connected display list. Error = %d", status);
+    return -EINVAL;
+  }
+
+  auto best_fb_width = 0u;
+  auto best_fb_height = 0u;
+
+  for (auto &iter : hw_displays_info) {
+    auto &info = iter.second;
+    if (info.display_type != kPluggable || !info.is_connected){
+      continue;
+    }
+    HWCDisplay *hwc_display = nullptr;
+    hwc2_display_t client_id = 0;
+    for (auto &map_info : map_info_pluggable_) {
+      if (info.display_id != map_info.sdm_id) {
+        continue;
+      }
+      client_id = map_info.client_id;
+    }
+
+    DLOGI("Temporarily creating display (%d) for resolution identification.", info.display_id);
+    status = HWCDisplayPluggable::Create(core_intf_, &buffer_allocator_, &callbacks_, this,
+                                         qservice_, client_id, info.display_id, 0, 0, false,
+                                         &hwc_display);
+
+    if (status) {
+      DLOGE("Failed to create display %d. Error = %d. Try other display.", info.display_id, status);
+      status = 0;
+      continue;
+    }
+
+    auto fb_width = 0u;
+    auto fb_height = 0u;
+    hwc_display->GetFrameBufferResolution(&fb_width, &fb_height);
+    DLOGI("Temporary display %d resolution: %d x %d", info.display_id, fb_width, fb_height);
+
+    DLOGI("Destroying temporarily created display.");
+    HWCDisplayPluggable::Destroy(hwc_display);
+    hwc_display = NULL;
+
+    if ((fb_width * fb_height) > (best_fb_width * best_fb_height)) {
+      best_fb_width = fb_width;
+      best_fb_height = fb_height;
+    }
+
+  }
+  DLOGI("Best w x h for null display: %d x %d", best_fb_width, best_fb_height);
+
+  if (best_fb_width > 0 && best_fb_height > 0) {
+    auto hwc_display_dummy = &hwc_display_[HWC_DISPLAY_PRIMARY];
+    if (*hwc_display_dummy) {
+      DLOGI("Destroying current null display.");
+      HWCDisplayDummy::Destroy(*hwc_display_dummy);
+    }
+    HWCDisplayDummy::Create(core_intf_, &buffer_allocator_, &callbacks_, this, qservice_,
+                            0, 0, best_fb_width, best_fb_height, hwc_display_dummy);
+    DLOGI("New dummy display with following res created: %d x %d", best_fb_width, best_fb_height);
+  }
+  return status;
 }
 
 int HWCSession::CreatePrimaryDisplay() {
