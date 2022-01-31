@@ -476,9 +476,22 @@ static void cec_set_audio_return_channel(const struct hdmi_cec_device* dev,
 static int cec_is_connected(const struct hdmi_cec_device* dev, int port_id)
 {
     cec_context_t* ctx = (cec_context_t*)(dev);
+    int ret = ioctl(ctx->node.fd, CEC_ADAP_G_PHYS_ADDR,
+            &ctx->port_info[0].physical_address);
+    if (ret) {
+        ALOGE("CEC_ADAP_G_PHYS_ADDR failed with error %d", errno);
+        ctx->node.is_connected = HDMI_NOT_CONNECTED;
+        return HDMI_NOT_CONNECTED;
+    }
+    if (ctx->port_info[0].physical_address == CEC_PHYS_ADDR_INVALID) {
+        ctx->node.is_connected = HDMI_NOT_CONNECTED;
+        ALOGI("%s: is_connected=%d, port_id=%d", __FUNCTION__, ctx->node.is_connected, port_id);
+        return HDMI_NOT_CONNECTED;
+    }
 
-    ALOGE("%s: is_connected=%d, port_id=%d", __FUNCTION__, ctx->node.is_connected, port_id);
-    return ctx->node.is_connected;
+    ctx->node.is_connected = HDMI_CONNECTED;
+    ALOGI("%s: is_connected=%d, port_id=%d", __FUNCTION__, ctx->node.is_connected, port_id);
+    return HDMI_CONNECTED;
 }
 
 static int cec_device_close(struct hw_device_t *dev)
