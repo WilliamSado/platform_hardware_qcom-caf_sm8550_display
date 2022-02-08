@@ -30,7 +30,7 @@
 /*
 * Changes from Qualcomm Innovation Center are provided under the following license:
 *
-* Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+* Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
 * SPDX-License-Identifier: BSD-3-Clause-Clear
 */
 
@@ -191,6 +191,12 @@
 
 // Enable IWE
 #define ENABLE_INLINE_WRITEBACK              DISPLAY_PROP("enable_inline_writeback")
+/* Property DISPLAY_REBOOT_STRATEGY:
+ * Display framework reboot strategy to keep the SF and HWC in sync.
+ *   0: Default behaviour (Reboot framework on first DSI-HDMI connection)
+ *   1: DSI always, reboot everytime DSI-HDMI connected
+ */
+#define DISPLAY_REBOOT_STRATEGY         DISPLAY_PROP("display_reboot_strategy")
 
 // Add all vendor.display properties above
 
