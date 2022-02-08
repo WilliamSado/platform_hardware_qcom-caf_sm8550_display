@@ -155,6 +155,8 @@ class HWCSession : hwc2_device_t, HWCUEventListener, public qClient::BnQClient,
     kRebootStrategyDefault,
     kRebootStrategyOnceDSI = kRebootStrategyDefault,
     kRebootStrategyAlwaysDSI,
+    kRebootStrategyAnyOnce,
+    kRebootStrategyNoReboot,
   };
 
   enum ComposerSetupMode {
@@ -516,10 +518,12 @@ class HWCSession : hwc2_device_t, HWCUEventListener, public qClient::BnQClient,
   void InitSupportedDisplaySlots();
   int GetDisplayIndex(int dpy);
   int CreatePrimaryDisplay();
+  void CreateDummyDisplay(hwc2_display_t client_id);
   int HandleBuiltInDisplays();
   int HandlePluggableDisplays(bool delay_hotplug);
   int HandleConnectedDisplays(HWDisplaysInfo *hw_displays_info, bool delay_hotplug);
   int HandleDisconnectedDisplays(HWDisplaysInfo *hw_displays_info);
+  int RecreatePluggablePrimaryDisplay(HWDisplaysInfo *hw_displays_info);
   void DestroyDisplay(DisplayMapInfo *map_info);
   void DestroyPluggableDisplay(DisplayMapInfo *map_info);
   void DestroyNonPluggableDisplay(DisplayMapInfo *map_info);
@@ -682,6 +686,7 @@ class HWCSession : hwc2_device_t, HWCUEventListener, public qClient::BnQClient,
   std::mutex callbacks_lock_;
   std::unordered_map<int64_t, std::shared_ptr<IDisplayConfigCallback>> callback_clients_;
   uint64_t callback_client_id_ = 0;
+  bool async_powermode_ = false;
   bool async_vds_creation_ = false;
   std::bitset<HWCCallbacks::kNumDisplays> display_ready_;
   bool secure_session_active_ = false;
