@@ -266,6 +266,7 @@ subdirs = [
     "gralloc",
     "gpu_tonemapper",
     "hdmi_cec",
+    "dp_cec",
     "sde-drm",
     "sdm/libs/utils",
     "sdm/libs/core",

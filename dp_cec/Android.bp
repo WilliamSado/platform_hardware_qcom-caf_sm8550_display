@@ -1,0 +1,35 @@
+cc_library_shared {
+
+    name: "hdmi_cec.kalama",
+    sanitize: {
+        integer_overflow: true,
+    },
+    vendor: true,
+    relative_install_path: "hw",
+    header_libs: [
+        "display_headers",
+        "qti_kernel_headers",
+        "qti_display_kernel_headers",
+        "device_kernel_headers",
+    ],
+    shared_libs: [
+        "libqservice",
+        "liblog",
+        "libutils",
+        "libcutils",
+        "libbinder",
+        "libqdutils",
+    ],
+
+    cflags: [
+        "-DLOG_TAG=\"qddp_cec\"",
+        "-Wno-sign-conversion",
+        "-Wno-implicit-int-conversion",
+        "-Wno-shorten-64-to-32",
+    ],
+    clang: true,
+    srcs: [
+        "qdp_cec.cpp",
+    ],
+}
+
