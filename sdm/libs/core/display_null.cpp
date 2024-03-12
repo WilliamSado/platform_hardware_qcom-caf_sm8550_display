@@ -30,7 +30,7 @@
 /*
  * Changes from Qualcomm Innovation Center are provided under the following license:
  *
- * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  * SPDX-License-Identifier: BSD-3-Clause-Clear
  */
 
@@ -161,6 +161,60 @@ DisplayError DisplayNull::GetDisplayId(int32_t *display_id) {
 
 DisplayError DisplayNull::GetDisplayType(DisplayType *display_type) {
   *display_type = kBuiltIn;
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::Commit(LayerStack *layer_stack) {
+  if (!layer_stack) {
+    return kErrorParameters;
+  }
+
+  for (Layer *layer : layer_stack->layers) {
+    if (layer->composition != kCompositionGPUTarget) {
+      layer->composition = kCompositionSDE;
+      layer->input_buffer.release_fence = nullptr;
+    }
+  }
+
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::GetDisplayState(DisplayState *state) {
+  if (!state) {
+    return kErrorParameters;
+  }
+
+  *state = state_;
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::SetDisplayState(DisplayState state, bool teardown,
+                                                  shared_ptr<Fence> *release_fence) {
+  state_ = state;
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::SetFrameBufferConfig(const DisplayConfigVariableInfo
+                                                       &variable_info) {
+  fb_config_ = variable_info;
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::GetFrameBufferConfig(DisplayConfigVariableInfo *variable_info) {
+  if (!variable_info) {
+    return kErrorParameters;
+  }
+
+  *variable_info = fb_config_;
+  return kErrorNone;
+}
+
+DisplayError DisplayNullExternal::GetDisplayIdentificationData(uint8_t *out_port,
+                                                               uint32_t *out_data_size,
+                                                               uint8_t *out_data) {
+  DisplayNull::GetDisplayIdentificationData(out_port, out_data_size, out_data);
+  *out_port = 4;  // TMDS Encoder Index
+
   return kErrorNone;
 }
 
