@@ -25,5 +25,6 @@ ifneq ($(TARGET_IS_HEADLESS),true)
                             init.qti.display_boot.sh \
                             libfilefinder \
                             vendor.qti.hardware.display.demura-service \
-                            modetest
+                            modetest \
+                            hdmi_cec.$(TARGET_BOARD_PLATFORM)
 endif
