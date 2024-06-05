@@ -3381,8 +3381,8 @@ int HWCSession::HandleConnectedDisplays(HWDisplaysInfo *hw_displays_info, bool d
       // Display is already used in a slot.
       continue;
     }
-
-    if (available_mixer_count < min_mixer_count) {
+    // If primary display not exist, ignore mixers check
+    if (pluggable_primary_connected_ && available_mixer_count < min_mixer_count) {
       DLOGI("mixers not available: available: %d, min: %d",
             available_mixer_count, min_mixer_count);
       return -EAGAIN;
