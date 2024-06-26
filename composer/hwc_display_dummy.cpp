@@ -55,6 +55,7 @@ int HWCDisplayDummy::Create(CoreInterface *core_intf, BufferAllocator *buffer_al
   HWCDisplay *hwc_display_dummy = new HWCDisplayDummy(core_intf, buffer_allocator, callbacks,
                                                       event_handler, qservice, id, sdm_id,
                                                       primary_width, primary_height);
+  hwc_display_dummy->SetValidationState(HWCDisplay::kSkipValidate);
   *hwc_display = hwc_display_dummy;
   return kErrorNone;
 }
@@ -64,6 +65,10 @@ void HWCDisplayDummy::Destroy(HWCDisplay *hwc_display) {
 }
 
 HWC2::Error HWCDisplayDummy::Validate(uint32_t *out_num_types, uint32_t *out_num_requests) {
+  for (auto hwc_layer : layer_set_) {
+    if (hwc_layer->GetClientRequestedCompositionType() == HWC2::Composition::Cursor)
+      layer_stack_.flags.cursor_present = true;
+  }
   return HWC2::Error::None;
 }
 
