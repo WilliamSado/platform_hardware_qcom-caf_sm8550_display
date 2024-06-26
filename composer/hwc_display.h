@@ -186,6 +186,12 @@ class HWCDisplay : public DisplayEventHandler {
     kDisplayStatusPause,       // Pause + PowerOff
     kDisplayStatusResume,      // Resume + PowerOn
   };
+  
+  enum DisplayValidateState {
+    kNormalValidate,
+    kInternalValidate,
+    kSkipValidate,
+  };
 
   struct HWCLayerStack {
     HWCLayer *client_target = nullptr;                   // Also known as framebuffer target
@@ -305,6 +311,7 @@ class HWCDisplay : public DisplayEventHandler {
   void BuildSolidFillStack(void);
   HWCLayer *GetHWCLayer(hwc2_layer_t layer_id);
   uint32_t GetGeometryChanges() { return geometry_changes_; }
+  void SetValidationState(DisplayValidateState state) { validate_state_ = state; }
   ColorMode GetCurrentColorMode() {
     return (color_mode_ ? color_mode_->GetCurrentColorMode() : ColorMode::SRGB);
   }
@@ -667,6 +674,7 @@ class HWCDisplay : public DisplayEventHandler {
   bool draw_method_set_ = false;
   bool client_target_3_1_set_ = false;
   bool is_client_up_ = false;
+  DisplayValidateState validate_state_ = kNormalValidate;
 };
 
 inline int HWCDisplay::Perform(uint32_t operation, ...) {
