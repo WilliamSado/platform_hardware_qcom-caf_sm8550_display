@@ -106,6 +106,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     vendor.gralloc.secure_preview_only=1
     PRODUCT_PROPERTY_OVERRIDES += vendor.display.enable_rounded_corner=1
     PRODUCT_PROPERTY_OVERRIDES += vendor.display.disable_rounded_corner_thread=0
+    PRODUCT_PROPERTY_OVERRIDES += vendor.display.display_reboot_strategy=3
 endif
 
 ifneq ($(PLATFORM_VERSION), 10)
